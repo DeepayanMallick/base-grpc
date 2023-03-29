@@ -1,0 +1,17 @@
+# Build Stage
+FROM golang:1.19-alpine as builder
+
+WORKDIR /src
+COPY . .
+RUN go mod download
+ENV VERSION=localdev
+
+WORKDIR cms
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o cms . && \
+	if [ ! -f env/config ]; then cp env/sample.config env/config ; fi
+
+# Run Stage
+FROM alpine:latest
+COPY --from=builder /src/cms .
+
+CMD ["./cms"]

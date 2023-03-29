@@ -57,7 +57,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Get("/", s.GetUserHandler)
 	r.Get("/create", s.CreateUserHandler)
-	http.ListenAndServe(":8000", r)
+	http.ListenAndServe(":3000", r)
 }
 
 func (s *Server) GetUserHandler(w http.ResponseWriter, r *http.Request) {

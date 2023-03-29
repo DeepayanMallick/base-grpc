@@ -1,0 +1,61 @@
+# use buildkit
+# export COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1
+version: "3"
+
+services:
+  postgresd:
+    container_name: base-grpc-postgresd
+    image: postgres:10.13
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./create-base-grpc-database.sh:/docker-entrypoint-initdb.d/create-base-grpc-database.sh
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    restart: unless-stopped
+
+  oms-cms:
+    container_name: base-grpc-cms
+    depends_on:
+      - base-grpc-usermgm
+    build:
+      context: ../..
+      dockerfile: deploy/compose/Dockerfile.cms
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
+    environment:
+      RUNTIME_ENVIRONMENT: "development"
+      RUNTIME_LOGLEVEL: "info"
+      RUNTIME_LOGFORMAT: "json"
+      SERVER_HOST: localhost
+      SERVER_PORT: "3000"
+      SERVICES_USERMGMURL: "base-grpc-usermgm:5000"
+    restart: unless-stopped
+    volumes:
+      - ../../cms/assets:/src/cms/assets
+
+  base-grpc-usermgm:
+    container_name: oms_usermgm
+    depends_on:
+      - postgresd
+    build:
+      context: ../..
+      dockerfile: deploy/compose/Dockerfile.usermgm
+    ports:
+      - 5000:5000
+    environment:
+      RUNTIME_ENVIRONMENT: "development"
+      RUNTIME_LOGLEVEL: "debug"
+      RUNTIME_LOGFORMAT: "json"
+      SERVER_PORT: "5000"
+      DATABASE_HOST: base-grpc-postgresd
+      DATABASE_PORT: "5432"
+      DATABASE_USER: postgres
+      DATABASE_DBNAME: usermgmdb
+      DATABASE_PASSWORD: postgres
+    restart: unless-stopped
+      
