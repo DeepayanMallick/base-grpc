@@ -1,0 +1,63 @@
+package user
+
+import (
+	"time"
+
+	"github.com/gunk/opt/http"
+	"github.com/gunk/opt/openapiv2"
+)
+
+type SortBy int
+
+const (
+	DESC SortBy = iota
+	ASC
+)
+
+type SortByColumn int
+
+const (
+	CreatedDate SortByColumn = iota
+	UserName
+)
+
+type Status int32
+
+const (
+	_ Status = iota
+	Active
+	Inactive
+)
+
+type User struct {
+	ID        string    `pb:"1" json:"id"`
+	FirstName string    `pb:"2" json:"first_name"`
+	LastName  string    `pb:"3" json:"last_name"`
+	Email     string    `pb:"4" json:"email"`
+	Username  string    `pb:"5" json:"username"`
+	Password  string    `pb:"6" json:"password"`
+	Status    Status    `pb:"7" json:"user_status"`
+	CreatedAt time.Time `pb:"8" json:"created_at"`
+	UpdatedAt time.Time `pb:"9" json:"updated_at"`  
+}
+
+type CreateUserRequest struct {
+	User User `pb:"1" json:"user"`
+}
+
+type CreateUserResponse struct {
+	ID string `pb:"1" json:"id"`
+}
+
+type GetUserByEmailRequest struct {
+	Email string `pb:"1" json:"email"`
+}
+
+type GetUserByEmailResponse struct {
+	User User `pb:"1" json:"users"`
+}
+
+type UserService interface {
+	GetUserByEmail(GetUserByEmailRequest) GetUserByEmailResponse
+	CreateUser(CreateUserRequest) CreateUserResponse
+}

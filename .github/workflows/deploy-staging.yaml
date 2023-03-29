@@ -1,0 +1,32 @@
+# name: oms-staging-deployment-github-actions
+
+# on:
+#   push:
+#     branches: [development]
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Deploy OMS
+#         uses: appleboy/ssh-action@v0.1.7
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           key: ${{ secrets.SSH_KEY }}
+#           username: ${{ secrets.SSH_USERNAME }}
+
+#           script: |
+#             cd ~/go/src/github.com/DeepayanMallick/base-grpc
+#             git pull origin main
+#             go mod tidy
+#             cd cms
+#             go build -ldflags="-w -s" -o cms
+#             cd ../hrm
+#             go build -ldflags="-w -s" -o hrm
+#             cd ../usermgm
+#             go build -ldflags="-w -s" -o usermgm
+#             cd ..
+#             service usermgm restart
+#             service hrm restart
+#             service cms restart
+#             service nginx restart

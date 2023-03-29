@@ -1,0 +1,12 @@
+/usermgm/env/config
+/usermgm/usermgm
+
+/hrm/env/config
+/hrm/hrm
+
+/cms/env/config
+/cms/cms
+/cms/assets/node_modules
+
+
+.DS_Store
